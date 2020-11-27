@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Product;
+use App\Models\ShoppingList;
 use App\Models\UnitType;
 use Illuminate\Database\Seeder;
 
@@ -19,5 +20,7 @@ class DatabaseSeeder extends Seeder
                 ->create();
         Product::factory(10)
                ->create();
+        ShoppingList::factory(10)
+                    ->create();
     }
 }
