@@ -16,11 +16,14 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        UnitType::factory(10)
+        UnitType::factory(50)
                 ->create();
-        Product::factory(10)
+        Product::factory(50)
                ->create();
-        ShoppingList::factory(10)
+        ShoppingList::factory(50)
                     ->create();
+        $this->call([
+            ShoppingListWithProductsSeeder::class
+        ]);
     }
 }
