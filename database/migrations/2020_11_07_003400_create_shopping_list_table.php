@@ -17,6 +17,7 @@ class CreateShoppingListTable extends Migration
             $table->id();
             $table->string('name');
             $table->integer('total_calories')
+                  ->default(0)
                   ->comment('Total de calorías de todos los productos.');
             $table->timestamps();
         });

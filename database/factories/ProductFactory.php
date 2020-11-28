@@ -22,9 +22,9 @@ class ProductFactory extends Factory
     {
         return [
             'name'        => $this->faker->word,
-            'price'       => $this->faker->randomFloat(2),
+            'price'       => $this->faker->randomFloat(2, 0, 9999),
             'img_url'     => $this->faker->imageUrl(),
-            'calories'    => $this->faker->randomNumber(),
+            'calories'    => $this->faker->randomNumber(4),
             'description' => $this->faker->text,
         ];
     }
