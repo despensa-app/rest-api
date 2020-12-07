@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\UnitTypeResource;
 use App\Models\UnitType;
+use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
@@ -12,17 +13,29 @@ class UnitTypeController extends Controller
 {
 
     /**
+     * @var ResponseFactory
+     */
+    private $responseFactory;
+
+    public function __construct(ResponseFactory $responseFactory)
+    {
+        $this->responseFactory = $responseFactory;
+    }
+
+    /**
      * Display a listing of the resource.
-     *
-     *
-     * @return \Illuminate\Http\JsonResponse
+     * @return \Illuminate\Http\JsonResponse|Response
      */
     public function index()
     {
-        $model    = UnitType::paginate();
-        $resource = UnitTypeResource::collection($model);
+        $model = UnitType::paginate();
 
-        return $resource->response();
+        if (!$model) {
+            return $this->responseFactory->noContent();
+        }
+
+        return UnitTypeResource::collection($model)
+                               ->response();
     }
 
     /**
@@ -30,11 +43,19 @@ class UnitTypeController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function store(Request $request)
     {
-        //
+        //TODO: validator:make
+        $model = UnitType::create($request->all());
+
+        if (!$model) {
+            return $this->responseFactory->badRequest('No se logro crear el objeto correctamente.');
+        }
+
+        return UnitTypeResource::make($model)
+                               ->response();
     }
 
     /**
@@ -49,18 +70,11 @@ class UnitTypeController extends Controller
         $model = UnitType::find($id);
 
         if (!$model) {
-            return response()
-                ->json([
-                    'error' => [
-                        'message' => 'No se encontraron registros.',
-                    ],
-                ])
-                ->setStatusCode(Response::HTTP_NOT_FOUND);
+            return $this->responseFactory->noContent();
         }
 
-        $resource = new UnitTypeResource($model);
-
-        return $resource->response();
+        return UnitTypeResource::make($model)
+                               ->response();
     }
 
     /**
@@ -69,11 +83,23 @@ class UnitTypeController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function update(Request $request, $id)
     {
-        //
+        $model = UnitType::find($id);
+
+        if (!$model) {
+            return $this->responseFactory->notFound();
+        }
+
+        $model->fill($request->all());
+
+        if (!$model->save()) {
+            return $this->responseFactory->badRequest('No se logro actualizar el objeto correctamente.');
+        }
+
+        return $this->responseFactory->noContent();
     }
 
     /**
@@ -85,6 +111,10 @@ class UnitTypeController extends Controller
      */
     public function destroy($id)
     {
-        //
+        if (UnitType::destroy($id)) {
+            return $this->responseFactory->noContent();
+        }
+
+        return $this->responseFactory->badRequest('No se logro eliminar el objeto correctamente.');
     }
 }
