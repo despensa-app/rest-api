@@ -8,6 +8,7 @@ use App\Models\UnitType;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Validator;
 
 class UnitTypeController extends Controller
 {
@@ -47,7 +48,14 @@ class UnitTypeController extends Controller
      */
     public function store(Request $request)
     {
-        //TODO: validator:make
+        $validate = Validator::make($request->all(), [
+            'name' => 'required|string',
+        ]);
+
+        foreach ($validate->errors()->all() as $message) {
+            return $this->responseFactory->badRequest($message);
+        }
+
         $model = UnitType::create($request->all());
 
         if (!$model) {
@@ -87,6 +95,14 @@ class UnitTypeController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $validate = Validator::make($request->all(), [
+            'name' => 'sometimes|required|string',
+        ]);
+
+        foreach ($validate->errors()->all() as $message) {
+            return $this->responseFactory->badRequest($message);
+        }
+
         $model = UnitType::find($id);
 
         if (!$model) {
