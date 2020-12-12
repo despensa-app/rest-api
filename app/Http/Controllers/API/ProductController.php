@@ -47,13 +47,11 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        //TODO: pendiente
         $validate = Validator::make($request->all(), [
             'name'        => 'required|string',
-            'price'       => 'required',
-            'img_url'     => 'required',
-            'calories'    => 'required',
-            'description' => 'required',
+            'price'       => 'required|numeric|between:0.01,9999.99',
+            'img_url'     => 'required|url',
+            'calories'    => 'required|numeric|between:0.01,9999.99',
         ]);
 
         foreach ($validate->errors()
@@ -102,10 +100,9 @@ class ProductController extends Controller
     {
         $validate = Validator::make($request->all(), [
             'name'        => 'sometimes|required|string',
-            'price'       => 'sometimes|required',
-            'img_url'     => 'sometimes|required',
-            'calories'    => 'sometimes|required',
-            'description' => 'sometimes|required',
+            'price'       => 'sometimes|required|numeric|between:0.01,9999.99',
+            'img_url'     => 'sometimes|required|url',
+            'calories'    => 'sometimes|required|numeric|between:0.01,9999.99',
         ]);
 
         foreach ($validate->errors()
