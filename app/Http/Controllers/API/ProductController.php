@@ -65,7 +65,7 @@ class ProductController extends Controller
             return $this->responseFactory->badRequest('No se logro crear el objeto correctamente.');
         }
 
-        return ProductResource::make($model)
+        return ProductResource::make($model->refresh())
                               ->response();
     }
 
