@@ -16,7 +16,7 @@ class CreateShoppingListTable extends Migration
         Schema::create('shopping_list', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->integer('total_calories')
+            $table->decimal('total_calories', 8, 2, true)
                   ->default(0)
                   ->comment('Total de calorías de todos los productos.');
             $table->timestamps();

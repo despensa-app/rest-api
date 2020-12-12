@@ -15,9 +15,8 @@ class CreateProductsHasShoppingListTable extends Migration
     public function up()
     {
         Schema::create('products_has_shopping_list', function (Blueprint $table) {
-            $table->integer('units_per_product')
-                  ->default(1);
-            $table->integer('total_calories')
+            $table->integer('units_per_product');
+            $table->decimal('total_calories', 8, 2, true)
                   ->comment('Total de calorías por unidad');
             $table->foreignId('product_id')
                   ->index()
@@ -28,7 +27,11 @@ class CreateProductsHasShoppingListTable extends Migration
             $table->foreignId('unit_type_id')
                   ->index()
                   ->constrained('unit_types');
-            $table->primary(['product_id', 'shopping_list_id', 'unit_type_id'], 'products_has_shopping_list_primary');
+            $table->primary([
+                'product_id',
+                'shopping_list_id',
+                'unit_type_id',
+            ], 'products_has_shopping_list_primary');
         });
 
         DB::statement("alter table products_has_shopping_list comment 'Relación de productos y lista de la compra.'");
