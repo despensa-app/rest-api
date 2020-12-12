@@ -21,7 +21,7 @@ class ShoppingListWithProductsSeeder extends Seeder
     {
         $shoppingListCount = ShoppingList::query()
                                          ->count();
-        $shoppingListRand  = $this->getRand(ShoppingList::query(), rand(0, $shoppingListCount));
+        $shoppingListRand  = $this->getRand(ShoppingList::query(), random_int(0, $shoppingListCount));
 
         foreach ($shoppingListRand as $shoppingList) {
             $totalCalories = 0;
@@ -29,13 +29,13 @@ class ShoppingListWithProductsSeeder extends Seeder
                                      ->count();
             $productCount  = Product::query()
                                     ->count();
-            $recordLimit   = min(rand(1, 10), $unitTypeCount, $productCount);
+            $recordLimit   = min(random_int(1, 10), $unitTypeCount, $productCount);
 
             $unitTypes = $this->getRand(UnitType::query(), $recordLimit);
             $products  = $this->getRand(Product::query(), $recordLimit);
 
             for ($i = 0; $i < $recordLimit; $i++) {
-                $unitPerProduct = rand(1, 10);
+                $unitPerProduct = random_int(1, 10);
                 $product        = $products->shift();
                 $totalCaloriesPerUnit = $product->calories * $unitPerProduct;
                 $totalCalories += $totalCaloriesPerUnit;
