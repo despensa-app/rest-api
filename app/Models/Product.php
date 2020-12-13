@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
 
 /**
  * App\Models\Product
@@ -13,8 +15,10 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $img_url
  * @property double $calories
  * @property string|null $description Descripción del producto, notas, etc.
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @method Product find(int $id)
+ * @method Paginator paginate()
  */
 class Product extends Model
 {
@@ -40,5 +44,14 @@ class Product extends Model
         'created_at' => 'timestamp',
         'updated_at' => 'timestamp',
     ];
+
+    public function hasShoppingList(): bool
+    {
+        $count = ProductHasShoppingList::query()
+                                       ->where('product_id', '=', $this->id)
+                                       ->count();
+
+        return $count > 0;
+    }
 
 }
