@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\ProductResource;
 use App\Models\Product;
 use Illuminate\Contracts\Routing\ResponseFactory;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Validator;
 
 class ProductController extends Controller
@@ -15,20 +17,32 @@ class ProductController extends Controller
     /**
      * @var ResponseFactory
      */
-    private $responseFactory;
+    private ResponseFactory $responseFactory;
 
-    public function __construct(ResponseFactory $responseFactory)
+    /**
+     * @var Product
+     */
+    private Product $product;
+
+    /**
+     * ProductController constructor.
+     *
+     * @param  ResponseFactory  $responseFactory
+     * @param  Product  $product
+     */
+    public function __construct(ResponseFactory $responseFactory, Product $product)
     {
         $this->responseFactory = $responseFactory;
+        $this->product = $product;
     }
 
     /**
      * Display a listing of the resource.
-     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response
+     * @return JsonResponse|Response
      */
     public function index()
     {
-        $model = Product::paginate();
+        $model = $this->product->paginate();
 
         if (!$model) {
             return $this->responseFactory->noContent();
@@ -41,17 +55,17 @@ class ProductController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  Request  $request
      *
-     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response
+     * @return JsonResponse|Response
      */
     public function store(Request $request)
     {
         $validate = Validator::make($request->all(), [
-            'name'        => 'required|string',
-            'price'       => 'required|numeric|between:0.01,9999.99',
-            'img_url'     => 'required|url',
-            'calories'    => 'required|numeric|between:0.01,9999.99',
+            'name'     => 'required|string',
+            'price'    => 'required|numeric|between:0.01,9999.99',
+            'img_url'  => 'required|url',
+            'calories' => 'required|numeric|between:0.01,9999.99',
         ]);
 
         foreach ($validate->errors()
@@ -59,7 +73,7 @@ class ProductController extends Controller
             return $this->responseFactory->badRequest($message);
         }
 
-        $model = Product::create($request->all());
+        $model = $this->product->create($request->all());
 
         if (!$model) {
             return $this->responseFactory->badRequest('No se logro crear el objeto correctamente.');
@@ -74,11 +88,11 @@ class ProductController extends Controller
      *
      * @param  int  $id
      *
-     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response
+     * @return JsonResponse|Response
      */
     public function show($id)
     {
-        $model = Product::find($id);
+        $model = $this->product->find($id);
 
         if (!$model) {
             return $this->responseFactory->noContent();
@@ -91,18 +105,18 @@ class ProductController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  Request  $request
      * @param  int  $id
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function update(Request $request, $id)
     {
         $validate = Validator::make($request->all(), [
-            'name'        => 'sometimes|required|string',
-            'price'       => 'sometimes|required|numeric|between:0.01,9999.99',
-            'img_url'     => 'sometimes|required|url',
-            'calories'    => 'sometimes|required|numeric|between:0.01,9999.99',
+            'name'     => 'sometimes|required|string',
+            'price'    => 'sometimes|required|numeric|between:0.01,9999.99',
+            'img_url'  => 'sometimes|required|url',
+            'calories' => 'sometimes|required|numeric|between:0.01,9999.99',
         ]);
 
         foreach ($validate->errors()
@@ -110,7 +124,7 @@ class ProductController extends Controller
             return $this->responseFactory->badRequest($message);
         }
 
-        $model = Product::find($id);
+        $model = $this->product->find($id);
 
         if (!$model) {
             return $this->responseFactory->notFound();
@@ -130,11 +144,21 @@ class ProductController extends Controller
      *
      * @param  int  $id
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function destroy($id)
     {
-        if (Product::destroy($id)) {
+        $model = $this->product->find($id);
+
+        if (!$model) {
+            return $this->responseFactory->badRequest('El registro no existe.');
+        }
+
+        if ($model->hasShoppingList()) {
+            return $this->responseFactory->badRequest('No se puede eliminar un registro que esta incluido en una lista.');
+        }
+
+        if ($model->delete()) {
             return $this->responseFactory->noContent();
         }
 
