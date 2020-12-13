@@ -16,11 +16,23 @@ class UnitTypeController extends Controller
     /**
      * @var ResponseFactory
      */
-    private $responseFactory;
+    private ResponseFactory $responseFactory;
 
-    public function __construct(ResponseFactory $responseFactory)
+    /**
+     * @var UnitType
+     */
+    private UnitType $unitType;
+
+    /**
+     * UnitTypeController constructor.
+     *
+     * @param  ResponseFactory  $responseFactory
+     * @param  UnitType  $unitType
+     */
+    public function __construct(ResponseFactory $responseFactory, UnitType $unitType)
     {
         $this->responseFactory = $responseFactory;
+        $this->unitType = $unitType;
     }
 
     /**
@@ -29,7 +41,7 @@ class UnitTypeController extends Controller
      */
     public function index()
     {
-        $model = UnitType::paginate();
+        $model = $this->unitType->paginate();
 
         if (!$model) {
             return $this->responseFactory->noContent();
@@ -52,17 +64,18 @@ class UnitTypeController extends Controller
             'name' => 'required|string',
         ]);
 
-        foreach ($validate->errors()->all() as $message) {
+        foreach ($validate->errors()
+                          ->all() as $message) {
             return $this->responseFactory->badRequest($message);
         }
 
-        $model = UnitType::create($request->all());
+        $model = $this->unitType->create($request->all());
 
         if (!$model) {
             return $this->responseFactory->badRequest('No se logro crear el objeto correctamente.');
         }
 
-        return UnitTypeResource::make($model)
+        return UnitTypeResource::make($model->refresh())
                                ->response();
     }
 
@@ -75,7 +88,7 @@ class UnitTypeController extends Controller
      */
     public function show($id)
     {
-        $model = UnitType::find($id);
+        $model = $this->unitType->find($id);
 
         if (!$model) {
             return $this->responseFactory->noContent();
@@ -99,11 +112,12 @@ class UnitTypeController extends Controller
             'name' => 'sometimes|required|string',
         ]);
 
-        foreach ($validate->errors()->all() as $message) {
+        foreach ($validate->errors()
+                          ->all() as $message) {
             return $this->responseFactory->badRequest($message);
         }
 
-        $model = UnitType::find($id);
+        $model = $this->unitType->find($id);
 
         if (!$model) {
             return $this->responseFactory->notFound();
@@ -127,7 +141,17 @@ class UnitTypeController extends Controller
      */
     public function destroy($id)
     {
-        if (UnitType::destroy($id)) {
+        $model = $this->unitType->find($id);
+
+        if (!$model) {
+            return $this->responseFactory->badRequest('El registro no existe.');
+        }
+
+        if ($model->hasShoppingList()) {
+            return $this->responseFactory->badRequest('No se puede eliminar un registro que esta incluido en una lista.');
+        }
+
+        if ($model->delete()) {
             return $this->responseFactory->noContent();
         }
 
