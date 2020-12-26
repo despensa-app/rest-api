@@ -28,7 +28,7 @@ abstract class CrudApiController extends Controller
 
     private ValidationFactory $validationFactory;
 
-    public function __construct(
+    protected function __construct(
         ResponseFactory $responseFactory,
         Model $model,
         ValidationFactory $validationFactory,
