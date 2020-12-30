@@ -7,7 +7,7 @@ use App\Models\UnitType;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Validation\Factory as ValidationFactory;
 
-class UnitTypeController extends CrudApiController
+class UnitTypeApiController extends CrudApiController
 {
 
     protected array $rules = ['name' => 'required|string'];
