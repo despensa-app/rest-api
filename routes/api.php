@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\API\ProductApiController;
+use App\Http\Controllers\API\ShoppingListApiController;
 use App\Http\Controllers\API\UnitTypeApiController;
 use Illuminate\Support\Facades\Route;
 
@@ -20,3 +21,4 @@ use Illuminate\Support\Facades\Route;
 //API Resource routes
 Route::apiResource('unit-types', UnitTypeApiController::class);
 Route::apiResource('products', ProductApiController::class);
+Route::apiResource('shopping-list', ShoppingListApiController::class);
