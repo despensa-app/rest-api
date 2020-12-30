@@ -11,7 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Validator;
 
-class ProductController extends Controller
+class ProductApiController extends Controller
 {
 
     /**
