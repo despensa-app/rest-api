@@ -1,7 +1,7 @@
 <?php
 
-use App\Http\Controllers\API\ProductController;
-use App\Http\Controllers\API\UnitTypeController;
+use App\Http\Controllers\API\ProductApiController;
+use App\Http\Controllers\API\UnitTypeApiController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -18,5 +18,5 @@ use Illuminate\Support\Facades\Route;
 //Additional API routes
 
 //API Resource routes
-Route::apiResource('unit-types', UnitTypeController::class);
-Route::apiResource('products', ProductController::class);
+Route::apiResource('unit-types', UnitTypeApiController::class);
+Route::apiResource('products', ProductApiController::class);
