@@ -3,6 +3,8 @@
 namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Http\JsonResponse;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class Handler extends ExceptionHandler
 {
@@ -32,6 +34,17 @@ class Handler extends ExceptionHandler
      */
     public function register()
     {
-        //
+        $this->renderable(function (HttpException $e, $request) {
+            return $this->getResponse($e);
+        });
+    }
+
+    private function getResponse(HttpException $e): JsonResponse
+    {
+        return response()->json([
+            'error' => [
+                'message' => $e->getMessage(),
+            ],
+        ], $e->getStatusCode(), $e->getHeaders());
     }
 }
