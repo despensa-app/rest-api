@@ -7,8 +7,6 @@ use Illuminate\Http\Resources\Json\JsonResource;
 class UnitTypeResource extends JsonResource
 {
 
-    public $preserveKeys = true;
-
     /**
      * Transform the resource into an array.
      *
