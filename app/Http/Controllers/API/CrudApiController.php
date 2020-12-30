@@ -12,6 +12,8 @@ use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Http\Response;
 use Illuminate\Pagination\AbstractPaginator;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 abstract class CrudApiController extends Controller
 {
@@ -69,13 +71,13 @@ abstract class CrudApiController extends Controller
 
         foreach ($validate->errors()
                           ->all() as $message) {
-            return $this->responseFactory->badRequest($message);
+            throw new BadRequestHttpException($message);
         }
 
         $model = $this->model->create($request->all());
 
         if (!$model) {
-            return $this->responseFactory->badRequest('No se logro crear el objeto correctamente.');
+            throw new BadRequestHttpException('No se logro crear el objeto correctamente.');
         }
 
         return $this->makeResource($model->refresh())
@@ -93,9 +95,7 @@ abstract class CrudApiController extends Controller
     {
         $model = $this->model->find($id);
 
-        if (!$model) {
-            return $this->responseFactory->notFound();
-        }
+        $this->checkIfModelIsNull($model);
 
         return $this->makeResource($model)
                     ->response();
@@ -122,19 +122,16 @@ abstract class CrudApiController extends Controller
 
         foreach ($validate->errors()
                           ->all() as $message) {
-            return $this->responseFactory->badRequest($message);
+            throw new BadRequestHttpException($message);
         }
 
         $model = $this->model->find($id);
 
-        if (!$model) {
-            return $this->responseFactory->notFound();
-        }
-
+        $this->checkIfModelIsNull($model);
         $model->fill($request->all());
 
         if (!$model->save()) {
-            return $this->responseFactory->badRequest('No se logro actualizar el objeto correctamente.');
+            throw new BadRequestHttpException('No se logro actualizar el objeto correctamente.');
         }
 
         return $this->responseFactory->noContent();
@@ -149,21 +146,24 @@ abstract class CrudApiController extends Controller
      */
     public function destroy($id)
     {
+        return $this->destroyBase($id);
+    }
+
+    protected function destroyBase($id, \Closure $callbackBeforeDelete = null): Response
+    {
         $model = $this->model->find($id);
 
-        if (!$model) {
-            return $this->responseFactory->notFound();
-        }
+        $this->checkIfModelIsNull($model);
 
-        if ($model->hasShoppingList()) {
-            return $this->responseFactory->badRequest('No se puede eliminar un registro que esta incluido en una lista.');
+        if (is_callable($callbackBeforeDelete)) {
+            $callbackBeforeDelete($model);
         }
 
         if ($model->delete()) {
             return $this->responseFactory->noContent();
         }
 
-        return $this->responseFactory->badRequest('No se logro eliminar el objeto correctamente.');
+        throw new BadRequestHttpException('No se logro eliminar el objeto correctamente.');
     }
 
     /**
@@ -184,5 +184,12 @@ abstract class CrudApiController extends Controller
     private function paginatorResource(AbstractPaginator $model)
     {
         return $this->resourceClass::collection($model);
+    }
+
+    private function checkIfModelIsNull(?Model $model, string $message = 'No se encontraron registros.'): void
+    {
+        if (!$model) {
+            throw new NotFoundHttpException($message);
+        }
     }
 }
