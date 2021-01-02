@@ -36,7 +36,7 @@ class ShoppingListWithProductsSeeder extends Seeder
             $products = $this->getRand(Product::query(), $recordLimit);
 
             for ($i = 0; $i < $recordLimit; $i++) {
-                $unitPerProduct = random_int(1, 10);
+                $unitPerProduct = random_int(1, 99);
                 $product = $products->shift();
                 $unitType = $unitTypes->shift();
                 $totalCaloriesPerUnit = $product->calories * $unitPerProduct;
