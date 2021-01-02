@@ -19,6 +19,9 @@ class CreateShoppingListTable extends Migration
             $table->decimal('total_calories', 8, 2, true)
                   ->default(0)
                   ->comment('Total de calorías de todos los productos.');
+            $table->decimal('total_price', 8, 2, true)
+                  ->default(0)
+                  ->comment('Precio total de todos los productos.');
             $table->timestamps();
         });
     }
