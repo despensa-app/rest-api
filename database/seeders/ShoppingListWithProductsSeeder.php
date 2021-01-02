@@ -47,7 +47,8 @@ class ShoppingListWithProductsSeeder extends Seeder
                 DB::table('products_has_shopping_list')
                   ->insert([
                       'units_per_product' => $unitPerProduct,
-                      'total_calories'    => $product->calories * $unitPerProduct,
+                      'total_calories'    => $totalCaloriesPerUnit,
+                      'total_price'       => $totalPricePerUnit,
                       'product_id'        => $product->id,
                       'shopping_list_id'  => $shoppingList->id,
                       'unit_type_id'      => $unitType->id,
