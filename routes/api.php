@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\API\ProductApiController;
+use App\Http\Controllers\API\ProductShoppingListApiController;
 use App\Http\Controllers\API\ShoppingListApiController;
 use App\Http\Controllers\API\UnitTypeApiController;
 use Illuminate\Support\Facades\Route;
@@ -22,3 +23,18 @@ use Illuminate\Support\Facades\Route;
 Route::apiResource('unit-types', UnitTypeApiController::class);
 Route::apiResource('products', ProductApiController::class);
 Route::apiResource('shopping-list', ShoppingListApiController::class);
+Route::prefix('products-shopping-list')
+     ->group(function () {
+         Route::post('/', [
+             ProductShoppingListApiController::class,
+             'store',
+         ]);
+         Route::put('/', [
+             ProductShoppingListApiController::class,
+             'update',
+         ]);
+         Route::delete('/', [
+             ProductShoppingListApiController::class,
+             'destroy',
+         ]);
+     });
