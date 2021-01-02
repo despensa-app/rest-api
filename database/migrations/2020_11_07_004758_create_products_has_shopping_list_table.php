@@ -16,9 +16,9 @@ class CreateProductsHasShoppingListTable extends Migration
     {
         Schema::create('products_has_shopping_list', function (Blueprint $table) {
             $table->integer('units_per_product');
-            $table->decimal('total_calories', 8, 2, true)
+            $table->decimal('total_calories', 11, 2, true)
                   ->comment('Total de calorías por unidad.');
-            $table->decimal('total_price', 8, 2, true)
+            $table->decimal('total_price', 11, 2, true)
                   ->comment('Precio total por unidad.');
             $table->foreignId('product_id')
                   ->index()
