@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property float $total_price Precio total de todos los productos.
  * @property int|null $created_at
  * @property int|null $updated_at
+ * @method ShoppingList find(int $id)
  */
 class ShoppingList extends Model
 {
