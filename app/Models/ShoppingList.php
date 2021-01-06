@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * App\Models\ShoppingList
@@ -13,6 +15,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property float $total_price Precio total de todos los productos.
  * @property int|null $created_at
  * @property int|null $updated_at
+ * @property ProductHasShoppingList[]|Collection productShoppingList
  * @method ShoppingList find(int $id)
  */
 class ShoppingList extends Model
@@ -24,8 +27,6 @@ class ShoppingList extends Model
 
     protected $fillable = [
         'name',
-        'total_calories',
-        'total_price',
     ];
 
     protected $casts = [
@@ -34,4 +35,20 @@ class ShoppingList extends Model
         'created_at'     => 'timestamp',
         'updated_at'     => 'timestamp',
     ];
+
+    public function setTotalCaloriesAndPrice()
+    {
+        $this->total_calories = 0;
+        $this->total_price = 0;
+
+        $this->productShoppingList->each(function (ProductHasShoppingList $productHasShoppingList) {
+            $this->total_calories += $productHasShoppingList->total_calories;
+            $this->total_price += $productHasShoppingList->total_price;
+        });
+    }
+
+    public function productShoppingList(): HasMany
+    {
+        return $this->hasMany(ProductHasShoppingList::class, 'shopping_list_id');
+    }
 }

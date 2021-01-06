@@ -10,12 +10,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 /**
  * App\Models\ProductHasShoppingList
  * @property int $units_per_product
- * @property string $total_calories Total de calorías por unidad.
- * @property string $total_price Precio total por unidad.
+ * @property float $total_calories Total de calorías por unidad.
+ * @property float $total_price Precio total por unidad.
  * @property int $product_id
  * @property int $shopping_list_id
  * @property int $unit_type_id
  * @property Product product
+ * @property ShoppingList shoppingList
  */
 class ProductHasShoppingList extends Model
 {
@@ -50,9 +51,19 @@ class ProductHasShoppingList extends Model
         'unit_type_id',
     ];
 
+    protected $casts = [
+        'total_calories' => 'double',
+        'total_price'    => 'double',
+    ];
+
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class, 'product_id');
+    }
+
+    public function shoppingList(): BelongsTo
+    {
+        return $this->belongsTo(ShoppingList::class, 'shopping_list_id');
     }
 
     public function find()
@@ -83,7 +94,7 @@ class ProductHasShoppingList extends Model
 
     public function shoppingListDoesntExists(): bool
     {
-        return $this->belongsTo(ShoppingList::class, 'shopping_list_id') === null;
+        return $this->shoppingList === null;
     }
 
     public function setTotalCaloriesAndPrice(Product $product = null): void
