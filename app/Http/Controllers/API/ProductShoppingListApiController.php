@@ -8,6 +8,7 @@ use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Factory as ValidationFactory;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ProductShoppingListApiController extends Controller
@@ -75,6 +76,14 @@ class ProductShoppingListApiController extends Controller
 
         if (!$currentDataModel->save()) {
             throw new BadRequestHttpException('No se logro actualizar el objeto correctamente.');
+        }
+
+        $shoppingList = $currentDataModel->shoppingList;
+        $shoppingList->setTotalCaloriesAndPrice();
+
+        if (!$shoppingList->save()) {
+            throw new HttpException(500,
+                'No se logro actualizar el total de calorías y el precio total de todas las unidades en la lista de la compra.');
         }
 
         return $this->responseFactory->noContent();
