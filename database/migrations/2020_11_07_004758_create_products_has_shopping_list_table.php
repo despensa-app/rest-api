@@ -15,10 +15,11 @@ class CreateProductsHasShoppingListTable extends Migration
     public function up()
     {
         Schema::create('products_has_shopping_list', function (Blueprint $table) {
-            $table->integer('units_per_product');
-            $table->decimal('total_calories', 11, 2, true)
+            $table->unsignedTinyInteger('units_per_product')
+                  ->default(1);
+            $table->unsignedDecimal('total_calories', 11)
                   ->comment('Total de calorías por unidad.');
-            $table->decimal('total_price', 11, 2, true)
+            $table->unsignedDecimal('total_price', 11)
                   ->comment('Precio total por unidad.');
             $table->foreignId('product_id')
                   ->index()

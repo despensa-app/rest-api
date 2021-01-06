@@ -16,10 +16,10 @@ class CreateShoppingListTable extends Migration
         Schema::create('shopping_list', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->decimal('total_calories', 11, 2, true)
+            $table->unsignedDecimal('total_calories', 11)
                   ->default(0)
                   ->comment('Total de calorías de todos los productos.');
-            $table->decimal('total_price', 11, 2, true)
+            $table->unsignedDecimal('total_price', 11)
                   ->default(0)
                   ->comment('Precio total de todos los productos.');
             $table->timestamps();
