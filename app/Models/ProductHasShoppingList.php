@@ -86,6 +86,14 @@ class ProductHasShoppingList extends Model
         return $this->belongsTo(ShoppingList::class, 'shopping_list_id') === null;
     }
 
+    public function setTotalCaloriesAndPrice(Product $product = null): void
+    {
+        $product = $product ?? $this->product;
+
+        $this->total_calories = $product->calories * $this->units_per_product;
+        $this->total_price = $product->price * $this->units_per_product;
+    }
+
     /**
      * Set the keys for a save update query.
      *
