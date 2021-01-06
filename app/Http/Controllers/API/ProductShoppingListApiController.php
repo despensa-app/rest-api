@@ -46,7 +46,7 @@ class ProductShoppingListApiController extends Controller
             throw new BadRequestHttpException('El producto ya existe en la lista.');
         }
 
-        $this->setTotalCaloriesAndPrice($model);
+        $model->setTotalCaloriesAndPrice();
 
         if (!$model->save()) {
             throw new BadRequestHttpException('No se logro crear el objeto correctamente.');
@@ -71,7 +71,7 @@ class ProductShoppingListApiController extends Controller
             $currentDataModel->units_per_product = $model->units_per_product;
         }
 
-        $this->setTotalCaloriesAndPrice($currentDataModel);
+        $currentDataModel->setTotalCaloriesAndPrice();
 
         if (!$currentDataModel->save()) {
             throw new BadRequestHttpException('No se logro actualizar el objeto correctamente.');
@@ -123,10 +123,4 @@ class ProductShoppingListApiController extends Controller
         }
     }
 
-    private function setTotalCaloriesAndPrice(ProductHasShoppingList $model): void
-    {
-        $product = $model->product;
-        $model->total_calories = $product->calories * $model->units_per_product;
-        $model->total_price = $product->price * $model->units_per_product;
-    }
 }
