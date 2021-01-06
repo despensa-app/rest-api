@@ -11,9 +11,7 @@ class ShoppingListApiController extends CrudApiController
 {
 
     protected array $rules = [
-        'name'           => 'required|string',
-        'total_calories' => 'required|numeric|between:0.01,9999.99',
-        'total_price'    => 'required|numeric|between:0.01,9999.99',
+        'name' => 'required|string',
     ];
 
     public function __construct(
