@@ -111,6 +111,11 @@ abstract class CrudApiController extends Controller
      */
     public function update(Request $request, int $id)
     {
+        return $this->updateBase($request, $id);
+    }
+
+    protected function updateBase(Request $request, int $id, \Closure $callbackAfterSave = null): Response
+    {
         if ($this->updateSometimes) {
             $rules = [];
             foreach ($this->rules as $key => $value) {
@@ -132,6 +137,10 @@ abstract class CrudApiController extends Controller
 
         if (!$model->save()) {
             throw new BadRequestHttpException('No se logro actualizar el objeto correctamente.');
+        }
+
+        if (is_callable($callbackAfterSave)) {
+            $callbackAfterSave($model);
         }
 
         return $this->responseFactory->noContent();
