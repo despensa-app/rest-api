@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Resources\ProductResource;
 use App\Models\Product;
 use App\Models\ProductHasShoppingList;
+use Closure;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Contracts\Validation\Factory as ValidationFactory;
 use Illuminate\Http\Request;
@@ -31,16 +32,7 @@ class ProductApiController extends CrudApiController
 
     public function update(Request $request, int $id)
     {
-        return $this->updateBase($request, $id, function (Product $model) {
-            $model->productShoppingList->each(function (ProductHasShoppingList $productHasShoppingList) use ($model) {
-                $productHasShoppingList->setTotalCaloriesAndPrice($model);
-
-                if (!$productHasShoppingList->save()) {
-                    throw new HttpException(500,
-                        'No se logro actualizar el total de calorías y precio por unidad en las listas de la compra.');
-                }
-            });
-        });
+        return $this->updateBase($request, $id, $this->callbackAfterSave());
     }
 
     public function destroy($id)
@@ -50,6 +42,44 @@ class ProductApiController extends CrudApiController
                 throw new BadRequestHttpException('No se puede eliminar un registro que esta incluido en una lista.');
             }
         });
+    }
+
+    private function callbackAfterSave(): Closure
+    {
+        return function (Product $product) {
+            $unique = static function (ProductHasShoppingList $productHasShoppingList) {
+                return $productHasShoppingList->shopping_list_id;
+            };
+
+            $product->productShoppingList->each($this->updateTotalCaloriesAndPrice($product))
+                                         ->unique($unique)
+                                         ->each($this->updateShoppingList());
+        };
+    }
+
+    private function updateTotalCaloriesAndPrice(Product $product): Closure
+    {
+        return static function (ProductHasShoppingList $productHasShoppingList) use ($product) {
+            $productHasShoppingList->setTotalCaloriesAndPrice($product);
+
+            if (!$productHasShoppingList->save()) {
+                throw new HttpException(500,
+                    'No se logro actualizar el total de calorías y precio por unidad en las listas de la compra.');
+            }
+        };
+    }
+
+    private function updateShoppingList(): Closure
+    {
+        return static function (ProductHasShoppingList $productHasShoppingList) {
+            $shoppingList = $productHasShoppingList->shoppingList;
+            $shoppingList->setTotalCaloriesAndPrice();
+
+            if (!$shoppingList->save()) {
+                throw new HttpException(500,
+                    'No se logro actualizar el total de calorías y el precio total de todas las unidades en la lista de la compra.');
+            }
+        };
     }
 
 }
