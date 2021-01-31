@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Resources\ProductResource;
+use App\Http\Resources\ProductHasShoppingListResource;
 use App\Models\Product;
 use App\Models\ProductHasShoppingList;
 use Closure;
@@ -28,6 +29,19 @@ class ProductApiController extends CrudApiController
         ValidationFactory $validationFactory
     ) {
         parent::__construct($responseFactory, $model, $validationFactory, ProductResource::class);
+    }
+
+    public function shoppingList(int $id)
+    {
+        $model = ProductHasShoppingList::where('product_id', $id)
+                                       ->paginate();
+
+        if (!$model) {
+            return $this->responseFactory->noContent();
+        }
+
+        return ProductHasShoppingListResource::collection($model)
+                                             ->response();
     }
 
     public function update(Request $request, int $id)

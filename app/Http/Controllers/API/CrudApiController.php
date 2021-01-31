@@ -22,7 +22,7 @@ abstract class CrudApiController extends Controller
 
     protected bool $updateSometimes = true;
 
-    private ResponseFactory $responseFactory;
+    protected ResponseFactory $responseFactory;
 
     private Model $model;
 

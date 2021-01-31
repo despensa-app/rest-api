@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $unit_type_id
  * @property Product product
  * @property ShoppingList shoppingList
+ * @property UnitType unitType
  */
 class ProductHasShoppingList extends Model
 {
@@ -66,6 +67,11 @@ class ProductHasShoppingList extends Model
         return $this->belongsTo(ShoppingList::class, 'shopping_list_id');
     }
 
+    public function unitType(): BelongsTo
+    {
+        return $this->belongsTo(UnitType::class, 'unit_type_id');
+    }
+
     public function find()
     {
         $query = $this->newQuery();
@@ -89,7 +95,7 @@ class ProductHasShoppingList extends Model
 
     public function unitTypeDoesntExists(): bool
     {
-        return $this->belongsTo(UnitType::class, 'unit_type_id') === null;
+        return $this->unitType === null;
     }
 
     public function shoppingListDoesntExists(): bool

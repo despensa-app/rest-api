@@ -22,6 +22,13 @@ use Illuminate\Support\Facades\Route;
 //API Resource routes
 Route::apiResource('unit-types', UnitTypeApiController::class);
 Route::apiResource('products', ProductApiController::class);
+Route::prefix('products')
+     ->group(function () {
+         Route::get('{product}/shopping-list', [
+             ProductApiController::class,
+             'shoppingList',
+         ]);
+     });
 Route::apiResource('shopping-list', ShoppingListApiController::class);
 Route::prefix('products-shopping-list')
      ->group(function () {
