@@ -1,11 +1,11 @@
 {
-    "name": "laravel/laravel",
+    "name": "despensa-app/rest-api",
     "type": "project",
-    "description": "The Laravel Framework.",
+    "description": "Despensa-app es una aplicación que te permite gestionar productos que compras de forma habitual.",
     "keywords": [
-        "framework",
         "laravel"
     ],
+    "version": "1.0.0",
     "license": "MIT",
     "require": {
         "php": "8.0.9",
