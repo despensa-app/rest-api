@@ -30,6 +30,13 @@ Route::prefix('products')
          ]);
      });
 Route::apiResource('shopping-list', ShoppingListApiController::class);
+Route::prefix('shopping-list')
+     ->group(function () {
+         Route::get('{id_shopping_list}/products', [
+             ShoppingListApiController::class,
+             'products',
+         ]);
+     });
 Route::prefix('products-shopping-list')
      ->group(function () {
          Route::post('/', [
