@@ -30,7 +30,7 @@ class ShoppingListWithProductsSeeder extends Seeder
                                      ->count();
             $productCount = Product::query()
                                    ->count();
-            $recordLimit = min(random_int(1, 10), $unitTypeCount, $productCount);
+            $recordLimit = min(random_int(1, 50), $unitTypeCount, $productCount);
 
             $unitTypes = $this->getRand(UnitType::query(), $recordLimit);
             $products = $this->getRand(Product::query(), $recordLimit);
