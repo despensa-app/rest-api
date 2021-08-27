@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string $name
  * @property float $total_calories Total de calorías de todos los productos.
  * @property float $total_price Precio total de todos los productos.
+ * @property float $total_products Número total de productos.
  * @property int|null $created_at
  * @property int|null $updated_at
  * @property ProductHasShoppingList[]|Collection productShoppingList
@@ -40,6 +41,7 @@ class ShoppingList extends Model
     {
         $this->total_calories = 0;
         $this->total_price = 0;
+        $this->total_products = $this->productShoppingList->count();
 
         $this->productShoppingList->each(function (ProductHasShoppingList $productHasShoppingList) {
             $this->total_calories += $productHasShoppingList->total_calories;
