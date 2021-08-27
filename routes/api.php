@@ -24,7 +24,7 @@ Route::apiResource('unit-types', UnitTypeApiController::class);
 Route::apiResource('products', ProductApiController::class);
 Route::prefix('products')
      ->group(function () {
-         Route::get('{product}/shopping-list', [
+         Route::get('{id_product}/shopping-list', [
              ProductApiController::class,
              'shoppingList',
          ]);
