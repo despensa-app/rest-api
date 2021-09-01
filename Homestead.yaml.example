@@ -28,3 +28,4 @@ features:
   - mariadb: true
   - ohmyzsh: false
   - webdriver: false
+  - meilisearch: true
