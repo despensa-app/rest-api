@@ -12,6 +12,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Http\Response;
 use Illuminate\Pagination\AbstractPaginator;
+use Laravel\Scout\Searchable;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -44,13 +45,24 @@ abstract class CrudApiController extends Controller
 
     /**
      * Display a listing of the resource.
+     *
+     * @param  Request  $request
+     *
      * @return JsonResponse|Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $model = $this->model->paginate();
+        $model = $this->search($request, $this->model);
 
-        if (!$model) {
+        if ($model->get()
+                  ->isEmpty()) {
+            return $this->responseFactory->noContent();
+        }
+
+        $model = $model->paginate()
+                       ->withQueryString();
+
+        if (!$model->count()) {
             return $this->responseFactory->noContent();
         }
 
@@ -200,5 +212,48 @@ abstract class CrudApiController extends Controller
         if (!$model) {
             throw new NotFoundHttpException($message);
         }
+    }
+
+    private function search(Request $request, Model $model)
+    {
+        $searchQuery = $request->input("query");
+
+        if ($searchQuery && $this->isUseTrait($model, Searchable::class)) {
+            return $model->search($searchQuery);
+        }
+
+        return $model;
+    }
+
+    private function isUseTrait($object, string $classTrait, bool $recursive = true): bool
+    {
+        $classUses = class_uses($object);
+        $result = array_key_exists($classTrait, $classUses);
+
+        if ($result || !$recursive) {
+            return $result;
+        }
+
+        $objectClass = is_object($object) ? get_class($object) : $object;
+
+        try {
+            $reflection = new \ReflectionClass($objectClass);
+
+            if ($parentClass = $reflection->getParentClass()) {
+                $result = $this->isUseTrait($parentClass->getName(), $classTrait);
+            }
+
+            if (!$result) {
+                foreach ($classUses as $class) {
+                    if ($result = $this->isUseTrait($class, $classTrait)) {
+                        break;
+                    }
+                }
+            }
+        } catch (\Exception $exception) {
+            $result = false;
+        }
+
+        return $result;
     }
 }
