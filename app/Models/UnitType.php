@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
+use Laravel\Scout\Searchable;
 
 /**
  * @property int $id
@@ -21,7 +22,7 @@ use Illuminate\Support\Carbon;
 class UnitType extends Model
 {
 
-    use HasFactory;
+    use HasFactory, Searchable;
 
     protected $table = 'unit_types';
 
