@@ -12,6 +12,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Http\Response;
 use Illuminate\Pagination\AbstractPaginator;
+use Laravel\Scout\Builder;
 use Laravel\Scout\Searchable;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -59,6 +60,7 @@ abstract class CrudApiController extends Controller
             return $this->responseFactory->noContent();
         }
 
+        $model = $this->orderById($model);
         $model = $model->paginate()
                        ->withQueryString();
 
@@ -223,6 +225,22 @@ abstract class CrudApiController extends Controller
         }
 
         return $model;
+    }
+
+    /**
+     * @param  Model|Builder  $model
+     *
+     * @return Model
+     */
+    private function orderById($model)
+    {
+        $keyName = $model->model ? $model->model->getKeyName() : $model->getKeyName();
+
+        if ("id" !== $keyName) {
+            return $model;
+        }
+
+        return $model->orderBy('id', 'desc');
     }
 
     private function isUseTrait($object, string $classTrait, bool $recursive = true): bool
