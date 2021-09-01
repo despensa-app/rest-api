@@ -2,7 +2,7 @@ name: despensa-app
 hostname: despensa-app.api
 
 ip: "192.168.10.10"
-memory: 2048
+memory: 1048
 cpus: 2
 provider: virtualbox
 
