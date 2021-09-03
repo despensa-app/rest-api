@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $product_id
  * @property int $shopping_list_id
  * @property int $unit_type_id
+ * @property boolean $selected
  * @property Product product
  * @property ShoppingList shoppingList
  * @property UnitType unitType

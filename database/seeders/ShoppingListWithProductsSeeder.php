@@ -53,6 +53,7 @@ class ShoppingListWithProductsSeeder extends Seeder
                       'product_id'        => $product->id,
                       'shopping_list_id'  => $shoppingList->id,
                       'unit_type_id'      => $unitType->id,
+                      'selected'          => random_int(0, 1),
                   ]);
             }
 
