@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\ProductHasShoppingList;
+use App\Models\ShoppingList;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Factory as ValidationFactory;
@@ -82,13 +83,7 @@ class ProductShoppingListApiController extends Controller
             throw new BadRequestHttpException('No se logro actualizar el objeto correctamente.');
         }
 
-        $shoppingList = $currentDataModel->shoppingList;
-        $shoppingList->setTotalCaloriesAndPrice();
-
-        if (!$shoppingList->save()) {
-            throw new HttpException(500,
-                'No se logro actualizar el total de calorías y el precio total de todas las unidades en la lista de la compra.');
-        }
+        $this->setTotalCaloriesAndPrice($currentDataModel->shoppingList);
 
         return $this->responseFactory->noContent();
     }
@@ -108,7 +103,22 @@ class ProductShoppingListApiController extends Controller
             throw new BadRequestHttpException('No se logro eliminar el objeto correctamente.');
         }
 
+        $this->setTotalCaloriesAndPrice($model->shoppingList);
+
         return $this->responseFactory->noContent();
+    }
+    
+    /**
+     * @param  ShoppingList  $shoppingList
+     */
+    private function setTotalCaloriesAndPrice(ShoppingList $shoppingList): void
+    {
+        $shoppingList->setTotalCaloriesAndPrice();
+
+        if (!$shoppingList->save()) {
+            throw new HttpException(500,
+                'No se logro actualizar el total de calorías y el precio total de todas las unidades en la lista de la compra.');
+        }
     }
 
     private function validateStoreRequest(Request $request): void
