@@ -56,6 +56,7 @@ class ProductHasShoppingList extends Model
     protected $casts = [
         'total_calories' => 'double',
         'total_price'    => 'double',
+        'selected'       => 'boolean',
     ];
 
     public function product(): BelongsTo
