@@ -40,11 +40,12 @@ class ShoppingList extends Model
 
     public function setTotalCaloriesAndPrice()
     {
+        $productShoppingList = $this->productShoppingList;
         $this->total_calories = 0;
         $this->total_price = 0;
-        $this->total_products = $this->productShoppingList->count();
+        $this->total_products = $productShoppingList->count();
 
-        $this->productShoppingList->each(function (ProductHasShoppingList $productHasShoppingList) {
+        $productShoppingList->each(function (ProductHasShoppingList $productHasShoppingList) {
             $this->total_calories += $productHasShoppingList->total_calories;
             $this->total_price += $productHasShoppingList->total_price;
         });
