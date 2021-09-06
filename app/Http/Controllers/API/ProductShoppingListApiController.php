@@ -72,6 +72,10 @@ class ProductShoppingListApiController extends Controller
             $currentDataModel->units_per_product = $model->units_per_product;
         }
 
+        if (!is_null($model->selected)) {
+            $currentDataModel->selected = $model->selected;
+        }
+
         $currentDataModel->setTotalCaloriesAndPrice();
 
         if (!$currentDataModel->save()) {
