@@ -54,6 +54,8 @@ class ProductShoppingListApiController extends Controller
             throw new BadRequestHttpException('No se logro crear el objeto correctamente.');
         }
         
+        $this->setTotalCaloriesAndPrice($model->shoppingList);
+        
         return $this->responseFactory->noContent();
     }
     
