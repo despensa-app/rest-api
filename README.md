@@ -6,7 +6,8 @@ Este módulo se comunica con el módulo [web](https://github.com/despensa-app/we
 
 ## Agradecimientos
 
-Gracias a [JetBrains](https://www.jetbrains.com/?from=SoftN%20CMS) por proporcionar una licencia para PHPStorm para desarrollar este proyecto.
+Gracias a [JetBrains](https://www.jetbrains.com/?from=SoftN%20CMS) por proporcionar una licencia para PHPStorm para
+desarrollar este proyecto.
 
 | JetBrains  | PHPStorm |
 | ------------- | ------------- |
