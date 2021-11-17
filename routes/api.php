@@ -24,31 +24,31 @@ Route::apiResource('unit-types', UnitTypeApiController::class);
 Route::apiResource('products', ProductApiController::class);
 Route::prefix('products')
      ->group(function () {
-         Route::get('{id_product}/shopping-list', [
-             ProductApiController::class,
-             'shoppingList',
+         Route::get('{product_id}/shopping-list', [
+                 ProductApiController::class,
+                 'shoppingList',
          ]);
      });
 Route::apiResource('shopping-list', ShoppingListApiController::class);
 Route::prefix('shopping-list')
      ->group(function () {
-         Route::get('{id_shopping_list}/products', [
-             ShoppingListApiController::class,
-             'products',
+         Route::get('{shopping_list_id}/products', [
+                 ShoppingListApiController::class,
+                 'products',
          ]);
      });
 Route::prefix('products-shopping-list')
      ->group(function () {
          Route::post('/', [
-             ProductShoppingListApiController::class,
-             'store',
+                 ProductShoppingListApiController::class,
+                 'store',
          ]);
          Route::put('/', [
-             ProductShoppingListApiController::class,
-             'update',
+                 ProductShoppingListApiController::class,
+                 'update',
          ]);
          Route::delete('/', [
-             ProductShoppingListApiController::class,
-             'destroy',
+                 ProductShoppingListApiController::class,
+                 'destroy',
          ]);
      });
