@@ -17,40 +17,40 @@ use Laravel\Scout\Searchable;
  * @property float $total_products Número total de productos.
  * @property int|null $created_at
  * @property int|null $updated_at
- * @property ProductHasShoppingList[]|Collection productShoppingList
+ * @property ProductHasShoppingList[]|Collection $productShoppingList
  * @method ShoppingList find(int $id)
  */
 class ShoppingList extends Model
 {
-
+    
     use HasFactory, Searchable;
-
+    
     protected $table = 'shopping_list';
-
+    
     protected $fillable = [
-        'name',
+            'name',
     ];
-
+    
     protected $casts = [
-        'total_calories' => 'double',
-        'total_price'    => 'double',
-        'created_at'     => 'timestamp',
-        'updated_at'     => 'timestamp',
+            'total_calories' => 'double',
+            'total_price'    => 'double',
+            'created_at'     => 'timestamp',
+            'updated_at'     => 'timestamp',
     ];
-
+    
     public function setTotalCaloriesAndPrice()
     {
         $productShoppingList = $this->productShoppingList;
         $this->total_calories = 0;
         $this->total_price = 0;
         $this->total_products = $productShoppingList->count();
-
+        
         $productShoppingList->each(function (ProductHasShoppingList $productHasShoppingList) {
             $this->total_calories += $productHasShoppingList->total_calories;
             $this->total_price += $productHasShoppingList->total_price;
         });
     }
-
+    
     public function productShoppingList(): HasMany
     {
         return $this->hasMany(ProductHasShoppingList::class, 'shopping_list_id');
