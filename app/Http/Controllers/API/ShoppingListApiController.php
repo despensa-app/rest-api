@@ -36,5 +36,13 @@ class ShoppingListApiController extends CrudApiController
         return ProductHasShoppingListResource::collection($model)
                                              ->response();
     }
-
+    
+    public function destroy($id)
+    {
+        return $this->destroyBase($id, function () use ($id) {
+            ProductHasShoppingList::whereShoppingListId($id)
+                                  ->delete();
+        });
+    }
+    
 }
